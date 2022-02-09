@@ -13,15 +13,22 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: '5.0.x'
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '16'
+    - name: Install cdxgen oss
+      run: |
+        npm install -g @appthreat/cdxgen
     - name: Download ShiftLeft cli
       run: |
         Invoke-WebRequest -Uri 'https://cdn.shiftleft.io/download/sl-latest-windows-x64.zip' -OutFile sl.zip
         Expand-Archive -Path sl.zip -DestinationPath .
     - name: Dotnet restore
-      run: dotnet restore GoatlyCore.sln
+      run: dotnet build GoatlyCore.sln
     - name: Analyze with NG SAST
       run: |
-        .\sl analyze --wait --app Goatly50 --oss-recursive --tag branch="${{ github.head_ref }}" --csharp --dotnet --cpg GoatlyCore.sln
+        cdxgen -r . -o bom.xml
+        .\sl analyze --wait --app Goatly50 --bomupload bom.xml --tag branch="${{ github.head_ref }}" --csharp --dotnet --cpg GoatlyCore.sln
       env:
         SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
   Build-Rules:
@@ -37,6 +44,9 @@ jobs:
       run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
       id: extract_branch
     - name: Validate Build Rules
-      run: ${GITHUB_WORKSPACE}/sl check-analysis --app Goatly50 --branch "${{ github.head_ref || steps.extract_branch.outputs.branch }}" --report --github-pr-number=${{github.event.number}} --github-pr-user=${{ github.repository_owner }} --github-pr-repo=${{ github.event.repository.name }}  --github-token=${{ secrets.GITHUB_TOKEN }}
+      run: ${GITHUB_WORKSPACE}/sl check-analysis --v2 --config shiftleft.yml --app Goatly50 \
+            --branch "${{ github.head_ref || steps.extract_branch.outputs.branch }}" --report \
+            --github-pr-number=${{github.event.number}} --github-pr-user=${{ github.repository_owner }} \
+            --github-pr-repo=${{ github.event.repository.name }}  --github-token=${{ secrets.GITHUB_TOKEN }}
       env:
         SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
