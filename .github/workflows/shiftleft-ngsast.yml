@@ -16,9 +16,6 @@ jobs:
     - uses: actions/setup-node@v2
       with:
         node-version: '16'
-    - name: Install cdxgen oss
-      run: |
-        npm install -g @appthreat/cdxgen
     - name: Download ShiftLeft cli
       run: |
         Invoke-WebRequest -Uri 'https://cdn.shiftleft.io/download/sl-latest-windows-x64.zip' -OutFile sl.zip
@@ -27,8 +24,7 @@ jobs:
       run: dotnet build GoatlyCore.sln
     - name: Analyze with NG SAST
       run: |
-        cdxgen -r . -o bom.xml
-        .\sl analyze --wait --verbose --app Goatly50 --bomupload bom.xml --tag branch="${{ github.head_ref }}" --csharp --dotnet --cpg GoatlyCore.sln
+        .\sl analyze --wait --verbose --app Goatly50 --oss-recursive --tag branch="${{ github.head_ref }}" --csharp --dotnet --cpg GoatlyCore.sln
       env:
         SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
   Build-Rules:
