@@ -21,7 +21,7 @@ jobs:
       run: dotnet restore GoatlyCore.sln
     - name: Analyze with NG SAST
       run: |
-        .\sl analyze --wait --force --app Goatly50 --tag branch="${{ github.head_ref }}" --csharp --dotnet --cpg GoatlyCore.sln
+        .\sl analyze --wait --app Goatly50 --oss-recursive --tag branch="${{ github.head_ref }}" --csharp --dotnet --cpg GoatlyCore.sln
       env:
         SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
   Build-Rules:
