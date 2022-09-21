@@ -22,10 +22,14 @@ jobs:
         Expand-Archive -Path sl.zip -DestinationPath .
     - name: Dotnet restore
       run: dotnet build GoatlyCore.sln
+    - name: Setup .NET 6
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '6.0.x'
     - name: Analyze with NG SAST
       run: |
         docker build -t goatly .
-        .\sl analyze --wait --app Goatly50 --tag branch="${{ github.head_ref }}" --csharp --container goatly --cpg GoatlyCore.sln
+        .\sl analyze --wait --app Goatly50 --tag branch="${{ github.head_ref }}" --csharp2cpg-download-url https://cdn.shiftleft.io/download/csharp2cpg-v1.0.1386-net-win-x64.zip --csharp --container goatly --cpg GoatlyCore.sln
       env:
         SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
   Build-Rules:
