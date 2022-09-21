@@ -12,7 +12,7 @@ jobs:
     - name: Setup .NET 5
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: '5.0.x'
+        dotnet-version: '6.0.x'
     - uses: actions/setup-node@v2
       with:
         node-version: '16'
@@ -22,10 +22,6 @@ jobs:
         Expand-Archive -Path sl.zip -DestinationPath .
     - name: Dotnet restore
       run: dotnet build GoatlyCore.sln
-    - name: Setup .NET 6
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: '6.0.x'
     - name: Analyze with NG SAST
       run: |
         docker build -t goatly .
