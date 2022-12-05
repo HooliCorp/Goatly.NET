@@ -22,7 +22,7 @@ jobs:
     - name: Analyze with NG SAST
       run: |
         docker build -t goatly .
-        .\sl analyze --wait --app Goatly70 --tag branch="${{ github.head_ref }}" --csharp --dotnet --container goatly --cpg GoatlyCore.sln
+        .\sl analyze --wait --app Goatly70 --tag branch="${{ github.head_ref }}" --verbose --csharp --dotnet --container goatly --cpg GoatlyCore.sln
       env:
         SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
   Build-Rules:
