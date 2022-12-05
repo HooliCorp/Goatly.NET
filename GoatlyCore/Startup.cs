@@ -25,11 +25,11 @@ namespace GoatlyCore
 
             var builder = new ConfigurationBuilder();
 
-            var dic = new Dictionary<string, string>
+            var dic = new Dictionary<string, string?>
             {
                 {Constants.WEBGOAT_ROOT, execDirectory},
             };
-            builder.AddInMemoryCollection(dic);
+            _ = builder.AddInMemoryCollection(dic);
             builder.AddConfiguration(configuration);
             Configuration = builder.Build();
 
